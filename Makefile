@@ -1,8 +1,7 @@
+##  Makefile
+
 ##  Ian Shearin
 ##  CS 480
-##  2012-02-03
-
-##  Milestone 02
 
 
 
@@ -13,7 +12,7 @@ LDFLAGS =
 
 
 ##  Files
-CFILES = lexer.c
+CFILES = main.c lexer.c
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 
 
