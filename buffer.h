@@ -17,7 +17,7 @@
 
 struct buffer
 {
-	char *data;
+	FILE *stream;
 };
 typedef struct buffer *buffer_t;
 

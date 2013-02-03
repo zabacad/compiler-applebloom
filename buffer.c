@@ -15,10 +15,17 @@
 
 buffer_t buffer_create(FILE *stream)
 {
-	return (buffer_t)NULL;
+	buffer_t buffer;
+
+
+	buffer = malloc(sizeof(struct buffer));
+	buffer->stream = stream;
+
+	return buffer;
 }
 
 
 void buffer_destory(buffer_t buffer)
 {
+	free(buffer);
 }
