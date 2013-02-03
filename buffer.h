@@ -33,7 +33,7 @@ char buffer_get(buffer_t buffer);
 char buffer_get_next(buffer_t buffer);
 char buffer_peek(buffer_t buffer);
 void buffer_put(buffer_t buffer, char what);
-void buffer_put_next(buffer_t buffer, char what);
+void buffer_put(buffer_t buffer, char *what);
 
 
 
