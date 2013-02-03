@@ -13,7 +13,8 @@
 
 
 
-int lexer(void)
+int lex(buffer_t in_buffer, buffer_t out_buffer)
 {
+	printf("Lexing...\n");
 	return EXIT_SUCCESS;
 }

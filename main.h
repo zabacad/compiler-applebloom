@@ -4,6 +4,18 @@
  *  Ian Shearin
  *  CS480
  */
+#ifndef MAIN_H
+#define MAIN_H
+
+
+
+
+#include "buffer.h"
+#include "lexer.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 
@@ -15,6 +27,4 @@
 
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#endif /* MAIN_H */

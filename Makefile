@@ -12,7 +12,7 @@ LDFLAGS =
 
 
 ##  Files
-CFILES = main.c lexer.c
+CFILES = main.c buffer.c lexer.c
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 
 

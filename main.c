@@ -15,20 +15,18 @@
 
 int main(int argc, char **argv)
 {
-	char *in_filename;
-	FILE in_file;
-	char *out_filename;
-	FILE out_file;
-
 	int action;
 
 	int arg;
 
+	buffer_t in_buffer;
+	buffer_t out_buffer;
+
 
 	/* Set default settings. */
-	//in_file = (FILE)NULL;
-	//out_file = (FILE)NULL;
 	action = ACT_LEX;
+	in_buffer = buffer_create(stdin);
+	out_buffer = buffer_create(stdout);
 
 	/* Parse command-line arguments. */
 	for (arg = 1; arg < argc; arg++)
@@ -66,7 +64,10 @@ int main(int argc, char **argv)
 	}
 	else if (action == ACT_LEX)
 	{
-		printf("Lexing...\n");
+		if (lex(in_buffer, out_buffer) == EXIT_FAILURE)
+		{
+			return EXIT_FAILURE;
+		}
 	}
 
 	return EXIT_SUCCESS;
