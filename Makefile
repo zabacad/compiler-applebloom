@@ -40,10 +40,12 @@ compiler: $(OBJFILES)
 
 
 #Clean
-clean:
+clean: clean-obj
+
+clean-obj:
 	-$(RM) $(OBJFILES)
 
-clean-all: clean
+clean-all: clean-obj
 	-$(RM) compiler
 
 
