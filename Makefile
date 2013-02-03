@@ -7,7 +7,7 @@
 
 
 ##  Global options
-CCFLAGS = -Wall -pedantic
+CCFLAGS = -Wall
 LDFLAGS = 
 
 
