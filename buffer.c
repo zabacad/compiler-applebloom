@@ -44,37 +44,42 @@ int buffer_seek(buffer_t buffer, int offset)
 }
 
 
-char buffer_get_next(buffer_t buffer)
-{
-	buffer_seek(buffer, 1);
-	return buffer_get(buffer);
-}
-
-
-char buffer_peek_next(buffer_t buffer)
-{
-	char next;
-
-
-	buffer_seek(buffer, 1);
-	next = buffer_get(buffer);
-	buffer_seek(buffer, -1);
-
-	return next;
-}
-
-
 char buffer_get(buffer_t buffer)
 {
-	return (char)fgetc(buffer->stream);
+	char c;
+
+
+	c = buffer_get_next(buffer);
+	buffer_seek(buffer, -1);
+
+	return c;
 }
 
 
-void buffer_put_next(buffer_t buffer, char what)
+char buffer_get_next(buffer_t buffer)
 {
+	return fgetc(buffer->stream);
+}
+
+
+char buffer_peek(buffer_t buffer)
+{
+	char c;
+
+
+	buffer_seek(buffer, 1);
+	c = buffer_get(buffer);
+	buffer_seek(buffer, -1);
+
+	return c;
 }
 
 
 void buffer_put(buffer_t buffer, char what)
+{
+}
+
+
+void buffer_put_next(buffer_t buffer, char what)
 {
 }
