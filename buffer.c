@@ -75,13 +75,13 @@ char buffer_peek(buffer_t buffer)
 }
 
 
-void buffer_put(buffer_t buffer, char what)
+void buffer_putc(buffer_t buffer, char what)
 {
 	fputc(what, buffer->stream);
 }
 
 
-void buffer_put(buffer_t buffer, char *what)
+void buffer_puts(buffer_t buffer, char *what)
 {
 	fputs(what, buffer->stream);
 }
