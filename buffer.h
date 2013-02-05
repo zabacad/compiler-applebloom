@@ -34,6 +34,7 @@ char buffer_get_next(buffer_t buffer);
 char buffer_peek(buffer_t buffer);
 void buffer_putc(buffer_t buffer, char what);
 void buffer_puts(buffer_t buffer, char *what);
+FILE *buffer_get_stream(buffer_t buffer);
 
 
 

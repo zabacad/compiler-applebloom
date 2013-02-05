@@ -10,6 +10,11 @@
 
 
 
+#include "buffer.h"
+
+
+
+
 /* Symbolic constants. */
 /* Classes of tokens. */
 #define TOKEN_NULL 0x00
@@ -25,17 +30,21 @@
 #define TOKEN_REL 0x0A
 
 /* Constants to save details when input does not fit. */
-#define BOOL_F 'f';
-#define BOOL_T 't';
-#define BOOL_OP_AND '&';
-#define BOOL_OP_OR '|';
-#define BOOL_OP_IFF 'v';
-#define BOOL_OP_NOT '~';
-#define REAL_OP_SIN 's';
-#define REAL_OP_COS 'c';
-#define REAL_OP_TAN 't';
-#define REAL_OP_LOGN 'l';
-#define REAL_OP_EXP 'e';
+#define BOOL_F 'f'
+#define BOOL_T 't'
+#define BOOL_OP_AND '&'
+#define BOOL_OP_OR '|'
+#define BOOL_OP_IFF 'v'
+#define BOOL_OP_NOT '~'
+#define REAL_OP_SIN 's'
+#define REAL_OP_COS 'c'
+#define REAL_OP_TAN 't'
+#define REAL_OP_LOGN 'l'
+#define REAL_OP_EXP 'e'
+
+/* Size to start and increment printable buffers. */
+#define PRINT_BUFF_INIT 0x08
+#define PRINT_BUFF_STEP 0x08
 
 
 
@@ -72,6 +81,7 @@ typedef struct token *token_t;
 token_t token_create();
 void token_set_class(token_t token, int class);
 void token_set_detail(token_t token, void *detail);
+void token_print(token_t token, buffer_t buffer);
 
 
 

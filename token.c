@@ -51,3 +51,18 @@ void token_set_detail(token_t token, void *detail)
 			break;
 	}
 }
+
+
+void token_print(token_t token, buffer_t buffer)
+{
+	FILE *stream;
+
+
+	stream = buffer_get_stream(buffer);
+
+	fprintf(stream, "<");
+
+	fprintf(stream, "[TOKEN]");
+
+	fprintf(stream, ">");
+}

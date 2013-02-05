@@ -85,3 +85,9 @@ void buffer_puts(buffer_t buffer, char *what)
 {
 	fputs(what, buffer->stream);
 }
+
+
+FILE *buffer_get_stream(buffer_t buffer)
+{
+	return buffer->stream;
+}
