@@ -53,6 +53,7 @@
 /* Token details depend on token class. */
 union token_detail_t
 {
+	char paren_detail;
 	char bool_detail;
 	char bool_op_detail;
 	int int_detail;
