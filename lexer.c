@@ -30,9 +30,21 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 
 		switch (in)
 		{
+			/* Unique characters. */
 			case '(':
 			case ')':
 				token_set_class(token, TOKEN_PAREN);
+				token_set_detail(token, (void *)&in);
+				break;
+			case '*':
+			case '/':
+			case '%':
+				token_set_class(token, TOKEN_NUM_OP);
+				token_set_detail(token, (void *)&in);
+				break;
+			case '=':
+			case '<':
+				token_set_class(token, TOKEN_REL);
 				token_set_detail(token, (void *)&in);
 				break;
 			default:
