@@ -42,20 +42,25 @@ compiler: $(OBJFILES)
 #Clean
 clean: clean-all
 
+clean-test:
+	-$(RM) *test*.out
+
 clean-obj:
 	-$(RM) $(OBJFILES)
 
-clean-all: clean-obj
+clean-all: clean-obj clean-test
 	-$(RM) compiler
 
 
 # Test
-stutest.out:
+stutest.out: compiler
 	cat stutest.in
 	-./compiler --lex < stutest.in > stutest.out
 	cat stutest.out
+	echo
 
-proftest.out:
+proftest.out: compiler
 	cat $(PROFTEST)
 	-./compiler --lex < $(PROFTEST) > proftest.out
 	cat proftest.out
+	echo
