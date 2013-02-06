@@ -28,17 +28,23 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 		if (in == EOF)
 			break;
 
-		if ((in == '(') || (in == ')'))
+		switch (in)
 		{
-			token_set_class(token, TOKEN_PAREN);
-			token_set_detail(token, (void *)&in);
+			case '(':
+			case ')':
+				token_set_class(token, TOKEN_PAREN);
+				token_set_detail(token, (void *)&in);
+				break;
+			default:
+				/* No new token. */
+				continue;
 		}
-		else
-			continue;
 
 		token_print(token, out_buffer);
 		buffer_putc(out_buffer, ' ');
 	}
+
+	token_destroy(token);
 
 	return EXIT_SUCCESS;
 }

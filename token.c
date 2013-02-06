@@ -25,6 +25,12 @@ token_t token_create()
 }
 
 
+void token_destroy(token_t token)
+{
+	free(token);
+}
+
+
 void token_set_class(token_t token, int class)
 {
 	token->class = class;

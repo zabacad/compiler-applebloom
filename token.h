@@ -80,6 +80,7 @@ typedef struct token *token_t;
 
 /* Prototypes. */
 token_t token_create();
+void token_destroy(token_t token);
 void token_set_class(token_t token, int class);
 void token_set_detail(token_t token, void *detail);
 void token_print(token_t token, buffer_t buffer);
