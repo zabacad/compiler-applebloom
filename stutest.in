@@ -1,0 +1,11 @@
+((+15)(-15))
+( (true) (false) )
+( ( string ) ( "string with spaces" ) )
+(
+	(
+		255
+	)
+	(
+		10.10
+	)
+)
