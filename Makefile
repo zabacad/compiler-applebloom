@@ -51,5 +51,11 @@ clean-all: clean-obj
 
 # Test
 stutest.out:
+	cat stutest.in
+	-./compiler --lex < stutest.in > stutest.out
+	cat stutest.out
 
 proftest.out:
+	cat $(PROFTEST)
+	-./compiler --lex < $(PROFTEST) > proftest.out
+	cat proftest.out
