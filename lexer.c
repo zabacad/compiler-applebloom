@@ -76,9 +76,9 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 					|| next == '8'
 					|| next == '9')
 				{
-					value.i = 0xff;
-					token_set_class(token, TOKEN_INT);
-					token_set_detail(token, (void *)&value);
+					/* `parse_num' needs to see the + or -. */
+					buffer_seek(in_buffer, -1);
+					parse_num(token, in_buffer);
 				}
 				break;
 			default:
@@ -93,4 +93,75 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 	token_destroy(token);
 
 	return EXIT_SUCCESS;
+}
+
+
+void parse_num(token_t token, buffer_t buffer)
+{
+	char in, next;
+	union
+	{
+		int i;
+		double d;
+	} value;
+
+
+	in = buffer_get_next(buffer);
+	switch (in)
+	{
+		case '-':
+			in = buffer_get_next(buffer);
+			value.i = -digit(in);
+			break;
+		case '+':
+			in = buffer_get_next(buffer);
+			value.i = digit(in);
+			break;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			value.i = digit(in);
+			break;
+	}
+
+	token_set_class(token, TOKEN_INT);
+	token_set_detail(token, (void *)&value);
+}
+
+int digit(char digit)
+{
+	/* In ASCII, it suffices to subtract 0x30. This works, too. */
+	switch (digit)
+	{
+		case '0':
+			return 0;
+		case '1':
+			return 1;
+		case '2':
+			return 2;
+		case '3':
+			return 3;
+		case '4':
+			return 4;
+		case '5':
+			return 5;
+		case '6':
+			return 6;
+		case '7':
+			return 7;
+		case '8':
+			return 8;
+		case '9':
+			return 9;
+	}
+
+	/* Fail. */
+	return -1;
 }

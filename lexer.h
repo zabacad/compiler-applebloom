@@ -20,6 +20,8 @@
 
 
 int lex(buffer_t in_buffer, buffer_t out_buffer);
+void parse_num(token_t token, buffer_t buffer);
+int digit(char digit);
 
 
 
