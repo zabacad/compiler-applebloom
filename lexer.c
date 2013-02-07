@@ -81,6 +81,20 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 					parse_num(token, in_buffer);
 				}
 				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				/* `parse_num' needs to see the first digit. */
+				buffer_seek(in_buffer, -1);
+				parse_num(token, in_buffer);
+				break;
 			default:
 				/* No new token. */
 				continue;
@@ -98,24 +112,37 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 
 void parse_num(token_t token, buffer_t buffer)
 {
-	char in, next;
-	union
-	{
-		int i;
-		double d;
-	} value;
+	char in;
+	int done;
 
+	int neg;
+	int real;
+
+	int whole;
+	int fraction;
+	double complete;
+
+
+	done = 0;
+
+	real = 0;
+	neg = 0;
+
+	whole = 0;
+	fraction = 0;
+	complete = 0;
 
 	in = buffer_get_next(buffer);
 	switch (in)
 	{
 		case '-':
 			in = buffer_get_next(buffer);
-			value.i = -digit(in);
+			whole = digit(in);
+			neg = 1;
 			break;
 		case '+':
 			in = buffer_get_next(buffer);
-			value.i = digit(in);
+			whole = digit(in);
 			break;
 		case '0':
 		case '1':
@@ -127,12 +154,87 @@ void parse_num(token_t token, buffer_t buffer)
 		case '7':
 		case '8':
 		case '9':
-			value.i = digit(in);
+			whole = digit(in);
 			break;
+		default:
+			return;
 	}
 
-	token_set_class(token, TOKEN_INT);
-	token_set_detail(token, (void *)&value);
+
+	while (!done && !real)
+	{
+		in = buffer_get_next(buffer);
+		switch (in)
+		{
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				whole *= 10;
+				whole += digit(in);
+				break;
+			case '.':
+				real = 1;
+				break;
+			default:
+				buffer_seek(buffer, -1);
+				done = 1;
+		}
+	}
+
+	while(!done && real)
+	{
+		in = buffer_get_next(buffer);
+		switch (in)
+		{
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				fraction *= 10;
+				fraction += digit(in);
+				break;
+			default:
+				buffer_seek(buffer, -1);
+				done = 1;
+		}
+	}
+
+	if (real)
+	{
+		complete = fraction;
+		while (complete >= 1)
+		{
+			complete /= 10;
+		}
+		complete += whole;
+
+		if (neg)
+			complete = -complete;
+
+		token_set_class(token, TOKEN_REAL);
+		token_set_detail(token, (void *)&complete);
+	}
+	else
+	{
+		if (neg)
+			whole = -whole;
+
+		token_set_class(token, TOKEN_INT);
+		token_set_detail(token, (void *)&whole);
+	}
 }
 
 int digit(char digit)
