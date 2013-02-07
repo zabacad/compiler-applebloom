@@ -95,6 +95,11 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 					buffer_seek(in_buffer, -1);
 					parse_num(token, in_buffer);
 				}
+				else
+				{
+					token_set_class(token, TOKEN_NUM_OP);
+					token_set_detail(token, (void *)&in);
+				}
 				break;
 			case '0':
 			case '1':
@@ -110,9 +115,10 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 				buffer_seek(in_buffer, -1);
 				parse_num(token, in_buffer);
 				break;
+			/* Everything else is a string. */
 			default:
-				/* No new token. */
-				continue;
+				buffer_seek(in_buffer, -1);\
+				parse_str(token, in_buffer);
 		}
 
 		token_print(token, out_buffer);
@@ -281,4 +287,57 @@ int digit(char digit)
 
 	/* Fail. */
 	return -1;
+}
+
+
+void parse_str(token_t token, buffer_t buffer)
+{
+	char in;
+	int done;
+
+	char *str;
+	int index;
+
+
+	done = 0;
+
+	str = (char *)malloc(256 * sizeof(char));
+	index = 0;
+
+	token_set_class(token, TOKEN_STR);
+
+	in = buffer_get_next(buffer);
+	if (in == '"')
+	{
+		while (!done && (index < 255))
+		{
+			in = buffer_get_next(buffer);
+			if (in == '"')
+			{
+				str[index++] = '\0';
+				done = 1;
+			}
+			else
+				str[index++] = in;
+		}
+	}
+	else
+	{
+		str[index++] = in;
+		while (!done && (index < 255))
+		{
+			in = buffer_get_next(buffer);
+			if (in == ' ' || in == '\t' || in == '\n' || in == '\r')
+			{
+				str[index++] = '\0';
+				done = 1;
+			}
+			else
+			{
+				str[index++] = in;
+			}
+		}
+	}
+
+	token_set_detail(token, (void *)&str);
 }

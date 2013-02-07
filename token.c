@@ -57,7 +57,7 @@ void token_set_detail(token_t token, void *detail)
 			token->detail = (union token_detail_t)*(double *)detail;
 			break;
 		case TOKEN_STR:
-			/* TODO */
+			token->detail = (union token_detail_t)*(char **)detail;
 			break;
 	}
 }
