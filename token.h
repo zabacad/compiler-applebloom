@@ -42,10 +42,6 @@
 #define REAL_OP_LOGN 'l'
 #define REAL_OP_EXP 'e'
 
-/* Size to start and increment printable buffers. */
-#define PRINT_BUFF_INIT 0x08
-#define PRINT_BUFF_STEP 0x08
-
 
 
 
@@ -72,6 +68,9 @@ struct token
 	int class;
 	/* The input data is stored here when possible, or mapped to a constant. */
 	union token_detail_t detail;
+	/* Where the token was first encountered. */
+	int line;
+	int col;
 };
 typedef struct token *token_t;
 

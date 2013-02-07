@@ -16,6 +16,8 @@
 int lex(buffer_t in_buffer, buffer_t out_buffer)
 {
 	char in, next;
+	int line, col;
+
 	int done;
 	token_t token;
 	union
@@ -25,7 +27,11 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 		double d;
 	} value;
 
+
 	printf("Lexing...\n");
+
+	line = 1;
+	col = 1;
 
 	done = 0;
 	token = token_create();
@@ -41,6 +47,15 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 
 		switch (in)
 		{
+			/* Skip whitespace. */
+			case ' ':
+			case '\t':
+			case '\r':
+				continue;
+			/* Count lines. */
+			case '\n':
+				buffer_inc_line(in_buffer);
+				continue;
 			/* Unique characters. */
 			case '(':
 			case ')':

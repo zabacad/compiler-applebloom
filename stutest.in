@@ -1,5 +1,7 @@
-((+15)(15)(-15))
-( (true) (false) )
+((+15)(15)(-15))(and or nor iff)
+( (true) false * / + - % ^ = <)
+((()) logn sin cos tan e^ e ^)
+"I am a \"string\"." string
 ( ( string ) ( "string with spaces" ) )
 (
 	(
