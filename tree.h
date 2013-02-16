@@ -10,6 +10,7 @@
 
 
 
+#include "stdlib.h"
 #include "string.h"
 
 
@@ -27,7 +28,7 @@ struct tree
 struct tree_node
 {
 	void *data;
-	tree_node_t *children;
+	tree_node_t **children;
 	int num_children;
 };
 
@@ -40,6 +41,8 @@ void tree_destroy(tree_t *tree);
 tree_node_t *tree_node_create(void *data, size_t data_size);
 void tree_node_destroy(tree_node_t *node);
 void tree_node_set_data(tree_node_t *node, void *data, size_t data_size);
+void tree_node_add_child(tree_node_t *parent, tree_node_t *child, int index);
+void tree_node_remove_child(tree_node_t *parent, int index);
 
 
 
