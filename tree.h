@@ -15,6 +15,7 @@
 
 
 
+/* Data types. */
 typedef struct tree tree_t;
 typedef struct tree_node tree_node_t;
 
@@ -33,10 +34,12 @@ struct tree_node
 
 
 
+/* Prototypes. */
 tree_t *tree_create(void *data, size_t data_size);
 void tree_destroy(tree_t *tree);
 tree_node_t *tree_node_create(void *data, size_t data_size);
 void tree_node_destroy(tree_node_t *node);
+void tree_node_set_data(tree_node_t *node, void *data, size_t data_size);
 
 
 
