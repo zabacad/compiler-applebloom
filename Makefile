@@ -24,7 +24,7 @@ RM = rm -f
 
 ##  Specials
 .DEFAULT: compiler
-.PHONY: compiler clean
+.PHONY: clean
 
 
 
@@ -39,7 +39,7 @@ compiler: $(OBJFILES)
 	$(CC) -o $@ $< $(CCFLAGS)
 
 
-#Clean
+# Clean
 clean: clean-all
 
 clean-test:
