@@ -13,6 +13,9 @@
 
 
 
+/*
+ *  Create and return an empty token.
+ */
 token_t token_create()
 {
 	token_t token;
@@ -25,18 +28,27 @@ token_t token_create()
 }
 
 
+/*
+ *  Destory `token' and all its data.
+ */
 void token_destroy(token_t token)
 {
 	free(token);
 }
 
 
+/*
+ *  Change the class of `token'.
+ */
 void token_set_class(token_t token, int class)
 {
 	token->class = class;
 }
 
 
+/*
+ *  Change the detail of `token'. Depends on class.
+ */
 void token_set_detail(token_t token, void *detail)
 {
 	switch (token->class)
@@ -63,6 +75,9 @@ void token_set_detail(token_t token, void *detail)
 }
 
 
+/*
+ *  Print `token' to `buffer' in a human-readable form.
+ */
 void token_print(token_t token, buffer_t buffer)
 {
 	FILE *stream;

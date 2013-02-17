@@ -13,6 +13,9 @@
 
 
 
+/*
+ *  Command-line front end for compiler.
+ */
 int main(int argc, char **argv)
 {
 	int action;

@@ -13,6 +13,9 @@
 
 
 
+/*
+ *  Lex
+ */
 int lex(buffer_t in_buffer, buffer_t out_buffer)
 {
 	char in, next;
@@ -131,6 +134,9 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 }
 
 
+/*
+ *  
+ */
 void parse_num(token_t token, buffer_t buffer)
 {
 	char in;
@@ -258,6 +264,9 @@ void parse_num(token_t token, buffer_t buffer)
 	}
 }
 
+/*
+ *  
+ */
 int digit(char digit)
 {
 	/* In ASCII, it suffices to subtract 0x30. This works, too. */
@@ -290,6 +299,9 @@ int digit(char digit)
 }
 
 
+/*
+ *  
+ */
 void parse_str(token_t token, buffer_t buffer)
 {
 	char in;

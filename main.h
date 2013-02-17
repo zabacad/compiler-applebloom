@@ -10,7 +10,6 @@
 
 
 
-/* Headers. */
 #include "buffer.h"
 #include "lexer.h"
 
@@ -21,6 +20,7 @@
 
 
 
+/* Symbolic constants. */
 /* Actions to be performed. Stages must be in order. */
 #define ACT_NULL 0x00
 #define ACT_USAGE 0x01

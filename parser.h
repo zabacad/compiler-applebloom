@@ -17,6 +17,7 @@
 
 
 
+/* Prototypes. */
 int parse(buffer_t *in_buffer, buffer_t *out_buffer);
 
 
