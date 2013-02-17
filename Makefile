@@ -14,6 +14,8 @@ LDFLAGS =
 ##  Files
 CFILES = main.c buffer.c lexer.c parser.c token.c tree.c
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
+INFILES = stutest-parse00.in
+OUTFILES = $(addsuffix .out, $(basename $(INFILES)))
 
 
 ##  Commands
@@ -24,7 +26,7 @@ RM = rm -f
 
 ##  Specials
 .DEFAULT: compiler
-.PHONY: clean
+.PHONY: clean clean-test clean-obj clean-all
 
 
 
@@ -43,7 +45,8 @@ compiler: $(OBJFILES)
 clean: clean-all
 
 clean-test:
-	-$(RM) *test*.out
+	-$(RM) $(OUTFILES)
+	-$(RM) stutest.out
 
 clean-obj:
 	-$(RM) $(OBJFILES)
@@ -53,11 +56,14 @@ clean-all: clean-obj clean-test
 
 
 # Test
-stutest.out: compiler
-	cat stutest.in
-	-./compiler --lex < stutest.in > stutest.out
-	cat stutest.out
-	echo
+stutest.out: compiler $(OUTFILES)
+	cat $(OUTFILES) > stutest.out
+
+# *.in -> *.out as needed
+%.out: %.in
+	echo | cat $< -
+	-./compiler --parse < $< > $@
+	echo | cat $@ -
 
 proftest.out: compiler
 	cat $(PROFTEST)
