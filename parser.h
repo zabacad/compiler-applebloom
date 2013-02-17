@@ -10,12 +10,14 @@
 
 
 
+#include "buffer.h"
+
 #include <stdlib.h>
 
 
 
 
-int parse(buffer_t in_buffer, buffer_t out_buffer);
+int parse(buffer_t *in_buffer, buffer_t *out_buffer);
 
 
 
