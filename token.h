@@ -12,24 +12,27 @@
 
 #include "buffer.h"
 
+#include <string.h>
+
 
 
 
 /* Symbolic constants. */
-/* Classes of tokens. */
+/* Token classes. */
 #define TOKEN_NULL 0x00
-#define TOKEN_PAREN 0x01
-#define TOKEN_BOOL 0x02
-#define TOKEN_BOOL_OP 0x03
-#define TOKEN_INT 0x04
-#define TOKEN_REAL 0x05
-#define TOKEN_NUM_OP 0x06
-#define TOKEN_REAL_OP 0x07
-#define TOKEN_STR 0x08
-#define TOKEN_STR_OP 0x09
-#define TOKEN_REL 0x0A
+#define TOKEN_PAREN_L 0x01
+#define TOKEN_PAREN_R 0x02
+#define TOKEN_BOOL 0x03
+#define TOKEN_BOOL_OP 0x04
+#define TOKEN_INT 0x05
+#define TOKEN_REAL 0x06
+#define TOKEN_NUM_OP 0x07
+#define TOKEN_REAL_OP 0x08
+#define TOKEN_STR 0x09
+#define TOKEN_STR_OP 0x0A
+#define TOKEN_REL 0x0B
 
-/* Constants to save details when input does not fit. */
+/* Detail symbols. */
 #define BOOL_F 'f'
 #define BOOL_T 't'
 #define BOOL_OP_AND '&'
@@ -46,43 +49,31 @@
 
 
 /* Data types. */
-/* Token details depend on token class. */
-union token_detail_t
-{
-	char paren_detail;
-	char bool_detail;
-	char bool_op_detail;
-	int int_detail;
-	double real_detail;
-	char num_op_detail;
-	char real_op_detail;
-	char *str_detail;
-	char str_op_detail;
-	char rel_detail;
-};
+typedef struct token token_t;
 
-/* Any one token. */
 struct token
 {
-	/* The overarching class of the token. One of `TOKEN_*'. */
 	int class;
-	/* The input data is stored here when possible, or mapped to a constant. */
-	union token_detail_t detail;
-	/* Where the token was first encountered. */
+	union
+	{
+		char c;
+		int i;
+		double r;
+		char *s;
+	} detail;
 	int line;
 	int col;
 };
-typedef struct token *token_t;
 
 
 
 
 /* Prototypes. */
-token_t token_create();
-void token_destroy(token_t token);
-void token_set_class(token_t token, int class);
-void token_set_detail(token_t token, void *detail);
-void token_print(token_t token, buffer_t buffer);
+token_t *token_create();
+void token_destroy(token_t *token);
+void token_set_class(token_t *token, int class);
+void token_set_detail(token_t *token, void *detail);
+void token_print(token_t *token, buffer_t buffer);
 
 
 

@@ -22,13 +22,15 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 	int line, col;
 
 	int done;
-	token_t token;
+
+	token_t *token;
 	union
 	{
 		char c;
 		int i;
-		double d;
-	} value;
+		double r;
+		char *s;
+	} detail;
 
 
 	printf("Lexing...\n");
@@ -61,8 +63,11 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 				continue;
 			/* Unique characters. */
 			case '(':
+				token_set_class(token, TOKEN_PAREN_L);
+				token_set_detail(token, (void *)&in);
+				break;
 			case ')':
-				token_set_class(token, TOKEN_PAREN);
+				token_set_class(token, TOKEN_PAREN_R);
 				token_set_detail(token, (void *)&in);
 				break;
 			case '*':
@@ -137,7 +142,7 @@ int lex(buffer_t in_buffer, buffer_t out_buffer)
 /*
  *  
  */
-void parse_num(token_t token, buffer_t buffer)
+void parse_num(token_t *token, buffer_t buffer)
 {
 	char in;
 	int done;
@@ -302,7 +307,7 @@ int digit(char digit)
 /*
  *  
  */
-void parse_str(token_t token, buffer_t buffer)
+void parse_str(token_t *token, buffer_t buffer)
 {
 	char in;
 	int done;
@@ -351,5 +356,5 @@ void parse_str(token_t token, buffer_t buffer)
 		}
 	}
 
-	token_set_detail(token, (void *)&str);
+	token_set_detail(token, (void *)str);
 }
