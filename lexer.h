@@ -15,15 +15,30 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+
+
+
+/* Data types. */
+typedef struct lexer lexer_t;
+struct lexer
+{
+	buffer_t *buffer;
+	int line;
+	int col;
+};
 
 
 
 
 /* Prototypes. */
-int lex(buffer_t in_buffer, buffer_t out_buffer);
-void parse_num(token_t *token, buffer_t buffer);
-int digit(char digit);
-void parse_str(token_t *token, buffer_t buffer);
+lexer_t *lexer_create(buffer_t *in);
+void lexer_destroy(lexer_t *lexer);
+token_t *lexer_lex(lexer_t *lexer);
+
+static void num(char *s, token_t *token);
+static int digit(char digit);
 
 
 

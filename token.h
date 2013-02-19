@@ -19,31 +19,40 @@
 
 /* Symbolic constants. */
 /* Token classes. */
-#define TOKEN_NULL 0x00
-#define TOKEN_PAREN_L 0x01
-#define TOKEN_PAREN_R 0x02
-#define TOKEN_BOOL 0x03
-#define TOKEN_BOOL_OP 0x04
-#define TOKEN_INT 0x05
-#define TOKEN_REAL 0x06
-#define TOKEN_NUM_OP 0x07
-#define TOKEN_REAL_OP 0x08
-#define TOKEN_STR 0x09
-#define TOKEN_STR_OP 0x0A
-#define TOKEN_REL 0x0B
-
-/* Detail symbols. */
-#define BOOL_F 'f'
-#define BOOL_T 't'
-#define BOOL_OP_AND '&'
-#define BOOL_OP_OR '|'
-#define BOOL_OP_IFF 'v'
-#define BOOL_OP_NOT '~'
-#define REAL_OP_SIN 's'
-#define REAL_OP_COS 'c'
-#define REAL_OP_TAN 't'
-#define REAL_OP_LOGN 'l'
-#define REAL_OP_EXP 'e'
+#define T_NULL 0x00
+#define T_PAREN_L 0x01
+#define T_PAREN_R 0x02
+#define T_KW_PRINT 0x03
+#define T_KW_IF 0x04
+#define T_KW_WHILE 0x05
+#define T_KW_LET 0x06
+#define T_KW_ASSIGN 0x07
+#define T_KW_BOOL 0x08
+#define T_KW_INT 0x09
+#define T_KW_REAL 0x0A
+#define T_KW_STR 0x0B
+#define T_BOOL_F 0x0C
+#define T_BOOL_T 0x0D
+#define T_BOOL_OP_AND 0x0E
+#define T_BOOL_OP_OR 0x0F
+#define T_BOOL_OP_NOT 0x10
+#define T_BOOL_OP_IFF 0x11
+#define T_RELATE_EQ 0x12
+#define T_RELATE_LT 0x13
+#define T_OP_ADD_CAT 0x14
+#define T_NUM_OP_SUB 0x15
+#define T_NUM_OP_MUL 0x16
+#define T_NUM_OP_DIV 0x17
+#define T_NUM_OP_MOD 0x18
+#define T_NUM_OP_POW 0x19
+#define T_REAL_OP_LOGN 0x1A
+#define T_REAL_OP_EPOW 0x1B
+#define T_REAL_OP_SIN 0x1C
+#define T_REAL_OP_COS 0x1D
+#define T_REAL_OP_TAN 0x1E
+#define T_INT 0x1F
+#define T_REAL 0x20
+#define T_STR 0x21
 
 
 
@@ -56,7 +65,6 @@ struct token
 	int class;
 	union
 	{
-		char c;
 		int i;
 		double r;
 		char *s;
@@ -73,7 +81,9 @@ token_t *token_create();
 void token_destroy(token_t *token);
 void token_set_class(token_t *token, int class);
 void token_set_detail(token_t *token, void *detail);
-void token_print(token_t *token, buffer_t buffer);
+void token_set_line(token_t *token, int line);
+void token_set_col(token_t *token, int col);
+void token_print(token_t *token, FILE *stream);
 
 
 

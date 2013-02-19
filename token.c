@@ -22,7 +22,7 @@ token_t *token_create()
 
 
 	token = (token_t *)malloc(sizeof(token_t));
-	token->class = TOKEN_NULL;
+	token->class = T_NULL;
 
 	return token;
 }
@@ -33,7 +33,7 @@ token_t *token_create()
  */
 void token_destroy(token_t *token)
 {
-	if (token->class == TOKEN_STR)
+	if (token->class == T_STR)
 		free(token->detail.s);
 
 	free(token);
@@ -45,11 +45,11 @@ void token_destroy(token_t *token)
  */
 void token_set_class(token_t *token, int class)
 {
-	if (token->class == TOKEN_STR)
+	if (token->class == T_STR)
 		free(token->detail.s);
 
 	token->class = class;
-	if (token->class == TOKEN_STR)
+	if (token->class == T_STR)
 		token->detail.s = NULL;
 }
 
@@ -65,23 +65,13 @@ void token_set_detail(token_t *token, void *detail)
 
 	switch (token->class)
 	{
-		case TOKEN_PAREN_L:
-		case TOKEN_PAREN_R:
-		case TOKEN_BOOL:
-		case TOKEN_BOOL_OP:
-		case TOKEN_NUM_OP:
-		case TOKEN_REAL_OP:
-		case TOKEN_STR_OP:
-		case TOKEN_REL:
-			token->detail.c = *(char *)detail;
-			break;
-		case TOKEN_INT:
+		case T_INT:
 			token->detail.i = *(int *)detail;
 			break;
-		case TOKEN_REAL:
+		case T_REAL:
 			token->detail.r = *(double *)detail;
 			break;
-		case TOKEN_STR:
+		case T_STR:
 			free((void *)token->detail.s);
 			data_size = strlen(detail) + 1;
 			token->detail.s = (char *)malloc(data_size * sizeof(char));
@@ -92,53 +82,40 @@ void token_set_detail(token_t *token, void *detail)
 
 
 /*
- *  Print `token' to `buffer' in a human-readable form.
+ *  Set the `line' where the `token' was encountered.
  */
-void token_print(token_t *token, buffer_t buffer)
+void token_set_line(token_t *token, int line)
 {
-	FILE *stream;
+	token->line = line;
+}
 
 
-	stream = buffer_get_stream(buffer);
+/*
+ *  Set the `col' where the `token' was encountered.
+ */
+void token_set_col(token_t *token, int col)
+{
+	token->col = col;
+}
 
-	fprintf(stream, "<");
 
+/*
+ *  Print `token' to `stream' in a human-readable form.
+ */
+void token_print(token_t *token, FILE *stream)
+{
 	switch (token->class)
 	{
-		case TOKEN_PAREN_L:
-		case TOKEN_PAREN_R:
-			fprintf(stream, "paren, %c", token->detail.c);
+		case T_INT:
+			fprintf(stream, "<int: %d>", token->detail.i);
 			break;
-		case TOKEN_BOOL:
-			fprintf(stream, "bool, %c", token->detail.c);
+		case T_REAL:
+			fprintf(stream, "<real: %lf>", token->detail.r);
 			break;
-		case TOKEN_BOOL_OP:
-			fprintf(stream, "bool op, %c", token->detail.c);
-			break;
-		case TOKEN_INT:
-			fprintf(stream, "int, %d", token->detail.i);
-			break;
-		case TOKEN_REAL:
-			fprintf(stream, "real, %lf", token->detail.r);
-			break;
-		case TOKEN_NUM_OP:
-			fprintf(stream, "num op, %c", token->detail.c);
-			break;
-		case TOKEN_REAL_OP:
-			fprintf(stream, "real op, %c", token->detail.c);
-			break;
-		case TOKEN_STR:
-			fprintf(stream, "string, %s", token->detail.s);
-			break;
-		case TOKEN_STR_OP:
-			fprintf(stream, "string op, %c", token->detail.c);
-			break;
-		case TOKEN_REL:
-			fprintf(stream, "relation, %c", token->detail.c);
+		case T_STR:
+			fprintf(stream, "<str: %s>", token->detail.s);
 			break;
 		default:
-			fprintf(stream, "???");
+			fprintf(stream, "<%d>", token->class);
 	}
-
-	fprintf(stream, ">");
 }

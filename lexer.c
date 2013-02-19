@@ -14,168 +14,81 @@
 
 
 /*
- *  Lex
+ *  Create and return a lexer.
  */
-int lex(buffer_t in_buffer, buffer_t out_buffer)
+lexer_t *lexer_create(buffer_t *in)
 {
-	char in, next;
-	int line, col;
-
-	int done;
-
-	token_t *token;
-	union
-	{
-		char c;
-		int i;
-		double r;
-		char *s;
-	} detail;
+	lexer_t *lexer;
 
 
-	printf("Lexing...\n");
+	lexer = (lexer_t *)malloc(sizeof(lexer_t));
 
-	line = 1;
-	col = 1;
-
-	done = 0;
-	token = token_create();
-
-	while (!done)
-	{
-		in = buffer_get_next(in_buffer);
-		if (in == EOF)
-		{
-			done = 1;
-			break;
-		}
-
-		switch (in)
-		{
-			/* Skip whitespace. */
-			case ' ':
-			case '\t':
-			case '\r':
-				continue;
-			/* Count lines. */
-			case '\n':
-				buffer_inc_line(in_buffer);
-				continue;
-			/* Unique characters. */
-			case '(':
-				token_set_class(token, TOKEN_PAREN_L);
-				token_set_detail(token, (void *)&in);
-				break;
-			case ')':
-				token_set_class(token, TOKEN_PAREN_R);
-				token_set_detail(token, (void *)&in);
-				break;
-			case '*':
-			case '/':
-			case '%':
-				token_set_class(token, TOKEN_NUM_OP);
-				token_set_detail(token, (void *)&in);
-				break;
-			case '=':
-			case '<':
-				token_set_class(token, TOKEN_REL);
-				token_set_detail(token, (void *)&in);
-				break;
-			/* Might be an op, might be a num. */
-			case '-':
-			case '+':
-				next = buffer_peek(in_buffer);
-				if (next == EOF)
-					done = 1;
-				/* Assume + or - immediatly followed by a digit is a number. */
-				if (next == '0'
-					|| next == '1'
-					|| next == '2'
-					|| next == '3'
-					|| next == '4'
-					|| next == '5'
-					|| next == '6'
-					|| next == '7'
-					|| next == '8'
-					|| next == '9')
-				{
-					/* `parse_num' needs to see the + or -. */
-					buffer_seek(in_buffer, -1);
-					parse_num(token, in_buffer);
-				}
-				else
-				{
-					token_set_class(token, TOKEN_NUM_OP);
-					token_set_detail(token, (void *)&in);
-				}
-				break;
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-				/* `parse_num' needs to see the first digit. */
-				buffer_seek(in_buffer, -1);
-				parse_num(token, in_buffer);
-				break;
-			/* Everything else is a string. */
-			default:
-				buffer_seek(in_buffer, -1);\
-				parse_str(token, in_buffer);
-		}
-
-		token_print(token, out_buffer);
-		buffer_putc(out_buffer, ' ');
-	}
-
-	token_destroy(token);
-
-	return EXIT_SUCCESS;
+	return lexer;
 }
 
 
 /*
- *  
+ *  Destroy a lexer.
  */
-void parse_num(token_t *token, buffer_t buffer)
+void lexer_destroy(lexer_t *lexer)
+{
+	free(lexer);
+}
+
+
+/*
+ *  Get the next token.
+ */
+token_t *lexer_lex(lexer_t *lexer)
 {
 	char in;
-	int done;
+	char *s;
 
-	int neg;
-	int real;
+	token_t *token;
+
+
+	token = token_create();
+
+	while (0)
+	{
+	}
+
+	return token;
+}
+
+
+/*
+ *  Convert a string to a number.
+ */
+static void num(char *s, token_t *token)
+{
+	int i;
+	int len;
+
+	int is_neg;
+	int is_real;
 
 	int whole;
 	int fraction;
 	double complete;
 
 
-	done = 0;
+	i = 0;
+	len = strlen(s);
 
-	real = 0;
-	neg = 0;
+	is_neg = 0;
+	is_real = 0;
 
 	whole = 0;
 	fraction = 0;
 	complete = 0;
 
-	in = buffer_get_next(buffer);
-	switch (in)
+	switch (s[i])
 	{
 		case '-':
-			in = buffer_get_next(buffer);
-			whole = digit(in);
-			neg = 1;
-			break;
+			is_neg = 1;
 		case '+':
-			in = buffer_get_next(buffer);
-			whole = digit(in);
-			break;
+			i++;
 		case '0':
 		case '1':
 		case '2':
@@ -186,17 +99,17 @@ void parse_num(token_t *token, buffer_t buffer)
 		case '7':
 		case '8':
 		case '9':
-			whole = digit(in);
+			whole = digit(s[i++]);
 			break;
 		default:
+			token_set_class(token, T_NULL);
 			return;
 	}
 
 
-	while (!done && !real)
+	while ((i < len) && !is_real)
 	{
-		in = buffer_get_next(buffer);
-		switch (in)
+		switch (s[i++])
 		{
 			case '0':
 			case '1':
@@ -209,21 +122,20 @@ void parse_num(token_t *token, buffer_t buffer)
 			case '8':
 			case '9':
 				whole *= 10;
-				whole += digit(in);
+				whole += digit(s[i]);
 				break;
 			case '.':
-				real = 1;
+				is_real = 1;
 				break;
 			default:
-				buffer_seek(buffer, -1);
-				done = 1;
+				token_set_class(token, T_NULL);
+				return;
 		}
 	}
 
-	while(!done && real)
+	while((i < len) && is_real)
 	{
-		in = buffer_get_next(buffer);
-		switch (in)
+		switch (s[i++])
 		{
 			case '0':
 			case '1':
@@ -236,71 +148,224 @@ void parse_num(token_t *token, buffer_t buffer)
 			case '8':
 			case '9':
 				fraction *= 10;
-				fraction += digit(in);
+				fraction += digit(s[i]);
 				break;
 			default:
-				buffer_seek(buffer, -1);
-				done = 1;
+				token_set_class(token, T_NULL);
+				return;
 		}
 	}
 
-	if (real)
+	if (is_real)
 	{
 		complete = fraction;
 		while (complete >= 1)
-		{
 			complete /= 10;
-		}
 		complete += whole;
 
-		if (neg)
+		if (is_neg)
 			complete = -complete;
 
-		token_set_class(token, TOKEN_REAL);
+		token_set_class(token, T_REAL);
 		token_set_detail(token, (void *)&complete);
 	}
 	else
 	{
-		if (neg)
+		if (is_neg)
 			whole = -whole;
 
-		token_set_class(token, TOKEN_INT);
+		token_set_class(token, T_INT);
 		token_set_detail(token, (void *)&whole);
 	}
 }
 
+
+/*
+ *  Convert a char digit to an int.
+ */
+static int digit(char digit)
+{
+	if (digit >= 0x30 && digit <= 0x39)
+		return (int)(digit - 0x30);
+
+	return -1;
+}
+
+
+
+
+
+
+
+
+/*
+ *  Lex
+ */
+token_t *lex(char *s)
+{
+	int len;
+
+	token_t *token;
+	union
+	{
+		char c;
+		int i;
+		double r;
+		char *s;
+	} detail;
+
+
+	len = strlen(s);
+
+	token = token_create();
+
+	if (strcmp(s, "println") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "if") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "while") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "let") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "assign") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "bool") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "int") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "real") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "string") == 0)
+		token->class = T_KW_PRINT;
+	else if (strcmp(s, "false") == 0)
+		token->class = T_BOOL_F;
+	else if (strcmp(s, "true") == 0)
+		token->class = T_BOOL_T;
+	else if (strcmp(s, "and") == 0)
+		token->class = T_BOOL_OP_AND;
+	else if (strcmp(s, "or") == 0)
+		token->class = T_BOOL_OP_OR;
+	else if (strcmp(s, "not") == 0)
+		token->class = T_BOOL_OP_NOT;
+	else if (strcmp(s, "iff") == 0)
+		token->class = T_BOOL_OP_IFF;
+	else if (strcmp(s, "=") == 0)
+		token->class = T_RELATE_EQ;
+	else if (strcmp(s, "<") == 0)
+		token->class = T_RELATE_LT;
+	else if (strcmp(s, "+") == 0)
+		token->class = T_OP_ADD_CAT;
+	else if (strcmp(s, "-") == 0)
+		token->class = T_NUM_OP_SUB;
+	else if (strcmp(s, "*") == 0)
+		token->class = T_NUM_OP_MUL;
+	else if (strcmp(s, "/") == 0)
+		token->class = T_NUM_OP_DIV;
+	else if (strcmp(s, "%") == 0)
+		token->class = T_NUM_OP_MOD;
+	else if (strcmp(s, "^") == 0)
+		token->class = T_NUM_OP_POW;
+	else if (strcmp(s, "logn") == 0)
+		token->class = T_REAL_OP_LOGN;
+	/*else if (strcmp(s, "true") == 0)
+		token->class = T_REAL_OP_EPOW;*/
+	else if (strcmp(s, "sin") == 0)
+		token->class = T_REAL_OP_SIN;
+	else if (strcmp(s, "cos") == 0)
+		token->class = T_REAL_OP_COS;
+	else if (strcmp(s, "tan") == 0)
+		token->class = T_REAL_OP_TAN;
+	/*else if (strcmp(s, "") == 0)
+		token->class = T_STR;*/
+
+	switch (s[0])
+	{
+		/*case ' ':
+		case '\t':
+		case '\r':
+			continue;*/
+		/* Count lines. */
+		/*case '\n':
+			buffer_inc_line(in_buffer);
+			continue;*/
+		/* Unique characters. */
+		/*case '(':
+			token_set_class(token, T_PAREN_L);
+			token_set_detail(token, (void *)&in);
+			break;
+		case ')':
+			token_set_class(token, T_PAREN_R);
+			token_set_detail(token, (void *)&in);
+			break;
+		case '*':
+		case '/':
+		case '%':
+			token_set_class(token, T_NUM_OP);
+			token_set_detail(token, (void *)&in);
+			break;
+		case '=':
+		case '<':
+			token_set_class(token, T_REL);
+			token_set_detail(token, (void *)&in);
+			break;*/
+		/* Might be an op, might be a num. */
+		/*case '-':
+		case '+':
+			next = buffer_peek(in_buffer);
+			if (next == EOF)
+				done = 1;*/
+			/* Assume + or - immediatly followed by a digit is a number. */
+			/*if (next == '0'
+				|| next == '1'
+				|| next == '2'
+				|| next == '3'
+				|| next == '4'
+				|| next == '5'
+				|| next == '6'
+				|| next == '7'
+				|| next == '8'
+				|| next == '9')
+			{*/
+				/* `parse_num' needs to see the + or -. */
+				/*buffer_seek(in_buffer, -1);
+				parse_num(token, in_buffer);
+			}
+			else
+			{
+				token_set_class(token, T_NUM_OP);
+				token_set_detail(token, (void *)&in);
+			}
+			break;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':*/
+			/* `parse_num' needs to see the first digit. */
+			/*buffer_seek(in_buffer, -1);
+			parse_num(token, in_buffer);
+			break;*/
+		/* Everything else is a string. */
+		/*default:
+			buffer_seek(in_buffer, -1);\
+			parse_str(token, in_buffer);*/
+	}
+
+	return token;
+}
+
+
 /*
  *  
  */
-int digit(char digit)
+void parse_num(token_t *token, buffer_t buffer)
 {
-	/* In ASCII, it suffices to subtract 0x30. This works, too. */
-	switch (digit)
-	{
-		case '0':
-			return 0;
-		case '1':
-			return 1;
-		case '2':
-			return 2;
-		case '3':
-			return 3;
-		case '4':
-			return 4;
-		case '5':
-			return 5;
-		case '6':
-			return 6;
-		case '7':
-			return 7;
-		case '8':
-			return 8;
-		case '9':
-			return 9;
-	}
 
-	/* Fail. */
-	return -1;
 }
 
 
@@ -321,7 +386,7 @@ void parse_str(token_t *token, buffer_t buffer)
 	str = (char *)malloc(256 * sizeof(char));
 	index = 0;
 
-	token_set_class(token, TOKEN_STR);
+	token_set_class(token, T_STR);
 
 	in = buffer_get_next(buffer);
 	if (in == '"')
