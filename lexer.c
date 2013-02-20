@@ -115,7 +115,10 @@ token_t *lexer_lex(lexer_t *lexer)
 		}
 	}
 
-	printf("TOKEN STRING:  %s\n", s);
+	token_print(token, stdout);
+	printf("\n");
+
+	token_set_class(token, T_EOF);
 
 	free(s);
 

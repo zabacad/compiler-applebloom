@@ -82,6 +82,15 @@ void token_set_detail(token_t *token, void *detail)
 
 
 /*
+ *  Get the class of `token'.
+ */
+int token_get_class(token_t *token)
+{
+	return token->class;
+}
+
+
+/*
  *  Set the `line' where the `token' was encountered.
  */
 void token_set_line(token_t *token, int line)

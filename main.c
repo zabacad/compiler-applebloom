@@ -25,6 +25,10 @@ int main(int argc, char **argv)
 	buffer_t *in_buffer;
 	buffer_t *out_buffer;
 
+	int is_done;
+	lexer_t *lexer;
+	token_t *token;
+
 
 	/* Set default settings. */
 	action = ACT_LEX;
@@ -72,7 +76,20 @@ int main(int argc, char **argv)
 	}
 	else if (action == ACT_LEX)
 	{
-		return lex(in_buffer, out_buffer);
+		is_done = 0;
+		lexer = lexer_create(in_buffer);
+
+		while (!is_done)
+		{
+			token = lexer_lex(lexer);
+			if (token_get_class(token) == T_EOF)
+				is_done = 1;
+			token_destroy(token);
+		}
+
+		lexer_destroy(lexer);
+
+		return EXIT_SUCCESS;
 	}
 	else if (action == ACT_PARSE)
 	{

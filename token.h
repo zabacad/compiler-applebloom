@@ -53,6 +53,7 @@
 #define T_INT 0x1F
 #define T_REAL 0x20
 #define T_STR 0x21
+#define T_EOF 0xFF
 
 
 
@@ -81,6 +82,7 @@ token_t *token_create();
 void token_destroy(token_t *token);
 void token_set_class(token_t *token, int class);
 void token_set_detail(token_t *token, void *detail);
+int token_get_class(token_t *token);
 void token_set_line(token_t *token, int line);
 void token_set_col(token_t *token, int col);
 void token_print(token_t *token, FILE *stream);
