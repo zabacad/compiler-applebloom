@@ -22,8 +22,8 @@ int main(int argc, char **argv)
 
 	int arg;
 
-	buffer_t in_buffer;
-	buffer_t out_buffer;
+	buffer_t *in_buffer;
+	buffer_t *out_buffer;
 
 
 	/* Set default settings. */

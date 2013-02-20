@@ -22,6 +22,8 @@ lexer_t *lexer_create(buffer_t *in)
 
 
 	lexer = (lexer_t *)malloc(sizeof(lexer_t));
+	lexer->lookback = '\0';
+	lexer->buffer = in;
 
 	return lexer;
 }
@@ -41,17 +43,81 @@ void lexer_destroy(lexer_t *lexer)
  */
 token_t *lexer_lex(lexer_t *lexer)
 {
-	char in;
+	int s_ready;
+	int i;
+	int s_len;
+	int s_cap;
 	char *s;
 
+	int token_ready;
 	token_t *token;
 
 
+	s_ready = 0;
+	i = 0;
+	s_cap = LEXER_STR_BLOCK;
+	s = (char *)malloc(s_cap * sizeof(char));
+
+	token_ready = 0;
 	token = token_create();
 
-	while (0)
+	/* Get the first char (special case). */
+	if (lexer->lookback != '\0')
 	{
+		s[i] = lexer->lookback;
+		lexer->lookback = '\0';
 	}
+	else
+	{
+		s[i] = buffer_get_next(lexer->buffer);
+	}
+
+	/* Skip leading whitespace. */
+	while (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r')
+		s[i] = buffer_get_next(lexer->buffer);
+
+	/* Stop on delimter. */
+	switch (s[i])
+	{
+		case '(':
+		case ')':
+			s[++i] = '\0';
+			s_ready = 1;
+			break;
+	}
+
+	while (!s_ready)
+	{
+		if (i >= s_cap)
+		{
+			s_cap += LEXER_STR_BLOCK;
+			s = (char *)realloc(s, s_cap * sizeof(char));
+		}
+
+		s[i] = buffer_get_next(lexer->buffer);
+
+		/* Stop on delimter. */
+		switch (s[i])
+		{
+			case '(':
+			case ')':
+				lexer->lookback = s[i];
+				s[i] = '\0';
+				s_ready = 1;
+				break;
+			case ' ':
+			case '\t':
+			case '\n':
+			case '\r':
+				s[++i] = '\0';
+				s_ready = 1;
+				break;
+		}
+	}
+
+	printf("TOKEN STRING:  %s\n", s);
+
+	free(s);
 
 	return token;
 }
@@ -363,16 +429,7 @@ token_t *lex(char *s)
 /*
  *  
  */
-void parse_num(token_t *token, buffer_t buffer)
-{
-
-}
-
-
-/*
- *  
- */
-void parse_str(token_t *token, buffer_t buffer)
+/*void parse_str(token_t *token, buffer_t buffer)
 {
 	char in;
 	int done;
@@ -422,4 +479,4 @@ void parse_str(token_t *token, buffer_t buffer)
 	}
 
 	token_set_detail(token, (void *)str);
-}
+}*/

@@ -16,9 +16,9 @@
 /*
  *  Create and return a buffer around `stream'.
  */
-buffer_t buffer_create(FILE *stream)
+buffer_t *buffer_create(FILE *stream)
 {
-	buffer_t buffer;
+	buffer_t *buffer;
 
 
 	/* Validate. */
@@ -28,7 +28,7 @@ buffer_t buffer_create(FILE *stream)
 	}
 
 	/* Create buffer. */
-	buffer = malloc(sizeof(struct buffer));
+	buffer = (buffer_t *)malloc(sizeof(buffer_t));
 	buffer->stream = stream;
 	buffer->line = 1;
 	buffer->col = 1;
@@ -40,7 +40,7 @@ buffer_t buffer_create(FILE *stream)
 /*
  *  Destory a buffer.
  */
-void buffer_destory(buffer_t buffer)
+void buffer_destory(buffer_t *buffer)
 {
 	free(buffer);
 }
@@ -50,34 +50,21 @@ void buffer_destory(buffer_t buffer)
  *  Move `offset' characters forward (or backward, it `offset' is negative) in
  *  `buffer'.
  */
-int buffer_seek(buffer_t buffer, int offset)
+int buffer_seek(buffer_t *buffer, int offset)
 {
 	buffer->col += offset;
+
 	return fseek(buffer->stream, offset, SEEK_CUR);
-}
-
-
-/*
- *  Return the current character from `buffer'
- */
-char buffer_get(buffer_t buffer)
-{
-	char c;
-
-
-	c = buffer_get_next(buffer);
-	buffer_seek(buffer, -1);
-
-	return c;
 }
 
 
 /*
  *  Return the current character from `buffer' and move to the next.
  */
-char buffer_get_next(buffer_t buffer)
+char buffer_get_next(buffer_t *buffer)
 {
 	buffer->col++;
+
 	return fgetc(buffer->stream);
 }
 
@@ -85,14 +72,14 @@ char buffer_get_next(buffer_t buffer)
 /*
  *  Return the next character from `buffer'.
  */
-char buffer_peek(buffer_t buffer)
+char buffer_peek(buffer_t *buffer)
 {
 	char c;
 
 
 	buffer_seek(buffer, 1);
-	c = buffer_get(buffer);
-	buffer_seek(buffer, -1);
+	c = buffer_get_next(buffer);
+	buffer_seek(buffer, -2);
 
 	return c;
 }
@@ -101,7 +88,7 @@ char buffer_peek(buffer_t buffer)
 /*
  *  Put `what' in the buffer and move to the next position.
  */
-void buffer_putc(buffer_t buffer, char what)
+void buffer_putc(buffer_t *buffer, char what)
 {
 	fputc(what, buffer->stream);
 }
@@ -110,7 +97,7 @@ void buffer_putc(buffer_t buffer, char what)
 /*
  *  Put `what' in the buffer and move to the next position.
  */
-void buffer_puts(buffer_t buffer, char *what)
+void buffer_puts(buffer_t *buffer, char *what)
 {
 	fputs(what, buffer->stream);
 }
@@ -119,7 +106,7 @@ void buffer_puts(buffer_t buffer, char *what)
 /*
  *  Record that the buffer is now on the next line.
  */
-void buffer_inc_line(buffer_t buffer)
+void buffer_inc_line(buffer_t *buffer)
 {
 	buffer->line++;
 	buffer->col = 0;
@@ -129,7 +116,7 @@ void buffer_inc_line(buffer_t buffer)
 /*
  *  Return the current line number.
  */
-int buffer_get_line(buffer_t buffer)
+int buffer_get_line(buffer_t *buffer)
 {
 	return buffer->line;
 }
@@ -138,7 +125,7 @@ int buffer_get_line(buffer_t buffer)
 /*
  *  Return the current column number.
  */
-int buffer_get_col(buffer_t buffer)
+int buffer_get_col(buffer_t *buffer)
 {
 	return buffer->col;
 }
@@ -147,7 +134,7 @@ int buffer_get_col(buffer_t buffer)
 /*
  *  Return the stream which `buffer' is wrapping.
  */
-FILE *buffer_get_stream(buffer_t buffer)
+FILE *buffer_get_stream(buffer_t *buffer)
 {
 	return buffer->stream;
 }

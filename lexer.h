@@ -20,11 +20,18 @@
 
 
 
+/* Constant settings. */
+#define LEXER_STR_BLOCK 16
+
+
+
+
 /* Data types. */
 typedef struct lexer lexer_t;
 struct lexer
 {
 	buffer_t *buffer;
+	char lookback;
 	int line;
 	int col;
 };
