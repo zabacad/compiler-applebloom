@@ -81,7 +81,8 @@ int main(int argc, char **argv)
 
 		while (!is_done)
 		{
-			token = lexer_lex(lexer);
+			token = token_create();
+			lexer_lex(lexer, token);
 			if (token_get_class(token) == T_EOF)
 				is_done = 1;
 			token_destroy(token);

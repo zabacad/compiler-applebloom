@@ -42,7 +42,7 @@ struct lexer
 /* Prototypes. */
 lexer_t *lexer_create(buffer_t *in);
 void lexer_destroy(lexer_t *lexer);
-token_t *lexer_lex(lexer_t *lexer);
+void lexer_lex(lexer_t *lexer, token_t *token);
 
 static void num(char *s, token_t *token);
 static int digit(char digit);
