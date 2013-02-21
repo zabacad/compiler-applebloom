@@ -78,16 +78,18 @@ int main(int argc, char **argv)
 	{
 		is_done = 0;
 		lexer = lexer_create(in_buffer);
+		token = token_create();
 
 		while (!is_done)
 		{
-			token = token_create();
 			lexer_lex(lexer, token);
+			token_print(token, stdout);
+			printf("\n");
 			if (token_get_class(token) == T_EOF)
 				is_done = 1;
-			token_destroy(token);
 		}
 
+		token_destroy(token);
 		lexer_destroy(lexer);
 
 		return EXIT_SUCCESS;

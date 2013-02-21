@@ -49,15 +49,11 @@ void lexer_lex(lexer_t *lexer, token_t *token)
 	int s_cap;
 	char *s;
 
-	int token_ready;
-
 
 	s_ready = 0;
 	i = 0;
 	s_cap = LEXER_STR_BLOCK;
 	s = (char *)malloc(s_cap * sizeof(char));
-
-	token_ready = 0;
 
 	/* Get the first char (special case). */
 	if (lexer->lookback != '\0')
@@ -79,12 +75,10 @@ void lexer_lex(lexer_t *lexer, token_t *token)
 	{
 		case '(':
 		case ')':
+		case EOF:
 			s[++i] = '\0';
 			s_ready = 1;
 			break;
-		case EOF:
-			token_set_class(token, T_EOF);
-			return;
 	}
 
 	while (!s_ready)
@@ -118,15 +112,26 @@ void lexer_lex(lexer_t *lexer, token_t *token)
 		}
 	}
 
-	token_print(token, stdout);
-	printf(": \"%s\"\n", s);
-
-	token_ready = 1;
+	token_set_class(token, T_NULL);
+	if (s[0] == EOF)
+	{
+		token_set_class(token, T_EOF);
+	}
+	else if (strcmp(s, "(") == 0)
+	{
+		token_set_class(token, T_PAREN_L);
+	}
+	else if (strcmp(s, ")") == 0)
+	{
+		token_set_class(token, T_PAREN_R);
+	}
+	else
+	{
+		token_set_class(token, T_STR);
+		token_set_detail(token, (void *)s);
+	}
 
 	free(s);
-
-	if (!token_ready)
-		token_set_class(token, T_NULL);
 }
 
 
