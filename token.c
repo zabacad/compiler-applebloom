@@ -115,16 +115,22 @@ void token_print(token_t *token, FILE *stream)
 {
 	switch (token->class)
 	{
+		case T_PAREN_L:
+			fprintf(stream, "<paren: (>");
+			break;
+		case T_PAREN_R:
+			fprintf(stream, "<paren: )>");
+			break;
 		case T_INT:
-			fprintf(stream, "<int: %d>", token->detail.i);
+			fprintf(stream, "<int:   %d>", token->detail.i);
 			break;
 		case T_REAL:
-			fprintf(stream, "<real: %lf>", token->detail.r);
+			fprintf(stream, "<real:  %lf>", token->detail.r);
 			break;
 		case T_STR:
-			fprintf(stream, "<str: %s>", token->detail.s);
+			fprintf(stream, "<str:   %s>", token->detail.s);
 			break;
 		default:
-			fprintf(stream, "<%d>", token->class);
+			fprintf(stream, "<other: %d>", token->class);
 	}
 }
