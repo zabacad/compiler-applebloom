@@ -20,14 +20,11 @@
 tree_t *tree_create(void *data, size_t data_size)
 {
 	tree_t *tree;
-	tree_node_t *root;
 
 
 	tree = (tree_t *)malloc(sizeof(tree_t));
 
-	root = tree_node_create(data, data_size);
-
-	tree->root = root;
+	tree->root = NULL;
 
 	return tree;
 }
@@ -40,6 +37,15 @@ void tree_destroy(tree_t *tree)
 {
 	tree_node_destroy(tree->root);
 	free(tree);
+}
+
+
+/*
+ *  
+ */
+void tree_set_root(tree_t *tree, tree_node_t *root)
+{
+	tree->root = root;
 }
 
 
@@ -90,6 +96,15 @@ void tree_node_set_data(tree_node_t *node, void *data, size_t data_size)
 	/* Copy new data. */
 	node->data = malloc(data_size);
 	memcpy(node->data, data, data_size);
+}
+
+
+/*
+ *  Get the data at `node'.
+ */
+void *tree_node_get_data(tree_node_t *node)
+{
+	return node->data;
 }
 
 

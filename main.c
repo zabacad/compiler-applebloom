@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 	}
 	else if (action == ACT_PARSE)
 	{
-		return parse(in_buffer, out_buffer);
+		return EXIT_SUCCESS;
 	}
 
 	return EXIT_SUCCESS;

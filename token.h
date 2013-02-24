@@ -53,7 +53,14 @@
 #define T_INT 0x1F
 #define T_REAL 0x20
 #define T_STR 0x21
-#define T_EOF 0xFF
+#define T_EOF 0x22
+
+/* Psuedo-tokens representing grammar rules on the parse tree. */
+#define T_G_F 0x80
+#define T_G_T 0x81
+#define T_G_S 0x82
+#define T_G_SP 0x83
+#define T_G_SPP 0x84
 
 
 
