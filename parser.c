@@ -114,7 +114,42 @@ static tree_node_t *parser_parse_f(parser_t *parser, token_t *pushback)
  */
 static tree_node_t *parser_parse_t(parser_t *parser, token_t *pushback)
 {
-	return NULL;
+	token_t *token;
+
+	tree_node_t *subtree;
+	token_t *self;
+
+
+	/* Create the head of the subtree. (The root of the grammar rule.) */
+	self = token_create();
+	token_set_class(self, T_G_F);
+
+	subtree = tree_node_create((void *)self, sizeof(token_t));
+
+	token_destroy(self);
+
+	/* Determine next token (may have already been lexed but not used). */
+	if (pushback != NULL)
+	{
+		token = pushback;
+	}
+	else
+	{
+		token = token_create();
+		lexer_lex(parser->lexer, token);
+	}
+
+	/* Add children: Add terminals directly and nonterminals through their
+		respective parse functions. */
+	//if (token_get_class(token) == T_EOF)
+	{
+		tree_node_add_child(subtree,
+			tree_node_create((void *)token, sizeof(token_t)), -1);
+	}
+
+	token_destroy(token);
+
+	return subtree;
 }
 
 
