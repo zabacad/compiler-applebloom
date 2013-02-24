@@ -39,8 +39,10 @@ struct tree_node
 tree_t *tree_create();
 void tree_destroy(tree_t *tree);
 void tree_set_root(tree_t *tree, tree_node_t *root);
+void tree_print(tree_t *tree, void (*printer)(void *));
 tree_node_t *tree_node_create(void *data, size_t data_size);
 void tree_node_destroy(tree_node_t *node);
+void tree_node_print(tree_node_t *node, void(*printer)(void *), int depth);
 void tree_node_set_data(tree_node_t *node, void *data, size_t data_size);
 void *tree_node_get_data(tree_node_t *node);
 void tree_node_add_child(tree_node_t *parent, tree_node_t *child, int index);

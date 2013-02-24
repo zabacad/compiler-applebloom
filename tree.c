@@ -50,6 +50,15 @@ void tree_set_root(tree_t *tree, tree_node_t *root)
 
 
 /*
+ *  
+ */
+void tree_print(tree_t *tree, void (*printer)(void *))
+{
+	printf("HERE\n");
+}
+
+
+/*
  *  Create and return a tree node with a copy of `data'. `data_size' bytes of
  *  data are copied.
  */
@@ -82,6 +91,14 @@ void tree_node_destroy(tree_node_t *node)
 	free(node->data);
 	free(node->children);
 	free(node);
+}
+
+
+/*
+ *  
+ */
+void tree_node_print(tree_node_t *node, void(*printer)(void *), int depth)
+{
 }
 
 

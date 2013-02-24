@@ -12,6 +12,8 @@
 
 #include "buffer.h"
 #include "lexer.h"
+#include "parser.h"
+#include "tree.h"
 
 #include <stdio.h>
 #include <stdlib.h>

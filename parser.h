@@ -26,7 +26,6 @@ struct parser
 {
 	lexer_t *lexer;
 	tree_t *tree;
-	token_t *pushback;
 };
 
 
@@ -35,10 +34,11 @@ struct parser
 /* Prototypes. */
 parser_t *parser_create(buffer_t *buffer);
 void parser_destroy(parser_t *parser);
+tree_t *parser_get_tree(parser_t *parser);
 void parser_parse(parser_t *parser);
-static tree_node_t *parser_parse_f(parser_t *parser);
-static tree_node_t *parser_parse_t(parser_t *parser);
-static tree_node_t *parser_parse_s(parser_t *parser);
+static tree_node_t *parser_parse_f(parser_t *parser, token_t *pushback);
+static tree_node_t *parser_parse_t(parser_t *parser, token_t *pushback);
+static tree_node_t *parser_parse_s(parser_t *parser, token_t *pushback);
 
 
 

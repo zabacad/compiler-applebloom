@@ -26,12 +26,13 @@ int main(int argc, char **argv)
 	buffer_t *out_buffer;
 
 	int is_done;
+	parser_t *parser;
 	lexer_t *lexer;
 	token_t *token;
 
 
 	/* Set default settings. */
-	action = ACT_LEX;
+	action = ACT_PARSE;
 	in_buffer = buffer_create(stdin);
 	out_buffer = buffer_create(stdout);
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv)
 			"\n"
 			"  -h, --help   Display this help text.\n"
 			"      --lex    Run the lexer.\n"
-			"      --parse  Run the parseer. (Calls the lexer.)\n"
+			"      --parse  Run the parser. (Calls the lexer.)\n"
 		);
 	}
 	else if (action == ACT_LEX)
@@ -96,6 +97,13 @@ int main(int argc, char **argv)
 	}
 	else if (action == ACT_PARSE)
 	{
+		parser = parser_create(in_buffer);
+
+		parser_parse(parser);
+		tree_print(parser_get_tree(parser), NULL);
+
+		parser_destroy(parser);
+
 		return EXIT_SUCCESS;
 	}
 
