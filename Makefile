@@ -34,11 +34,11 @@ RM = rm -f
 ##  Rules
 # Build
 compiler: $(OBJFILES)
-	$(LD) -o $@ $(OBJFILES) $(LDFLAGS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJFILES)
 
 # *.c -> *.o as needed
 %.o: %.c
-	$(CC) -o $@ $< $(CCFLAGS)
+	$(CC) $(CCFLAGS) -o $@ $<
 
 
 # Clean
