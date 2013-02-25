@@ -56,6 +56,7 @@ tree_t *parser_get_tree(parser_t *parser)
  */
 void parser_parse(parser_t *parser)
 {
+	printf("Parsing\n");
 	tree_set_root(parser->tree, parser_parse_f(parser, NULL));
 }
 
@@ -71,6 +72,7 @@ static tree_node_t *parser_parse_f(parser_t *parser, token_t *pushback)
 	token_t *self;
 
 
+	printf("Following grammar rule F\n");
 	/* Create the head of the subtree. (The root of the grammar rule.) */
 	self = token_create();
 	token_set_class(self, T_G_F);
@@ -94,6 +96,7 @@ static tree_node_t *parser_parse_f(parser_t *parser, token_t *pushback)
 		respective parse functions. */
 	if (token_get_class(token) == T_EOF)
 	{
+		printf("Adding terminal [EOF]\n");
 		tree_node_add_child(subtree,
 			tree_node_create((void *)token, sizeof(token_t)), -1);
 	}
@@ -120,9 +123,10 @@ static tree_node_t *parser_parse_t(parser_t *parser, token_t *pushback)
 	token_t *self;
 
 
+	printf("Following grammar rule T\n");
 	/* Create the head of the subtree. (The root of the grammar rule.) */
 	self = token_create();
-	token_set_class(self, T_G_F);
+	token_set_class(self, T_G_T);
 
 	subtree = tree_node_create((void *)self, sizeof(token_t));
 
@@ -141,10 +145,30 @@ static tree_node_t *parser_parse_t(parser_t *parser, token_t *pushback)
 
 	/* Add children: Add terminals directly and nonterminals through their
 		respective parse functions. */
-	//if (token_get_class(token) == T_EOF)
+	if (token_get_class(token) == T_PAREN_L)
 	{
+		printf("Adding terminal (\n");
 		tree_node_add_child(subtree,
 			tree_node_create((void *)token, sizeof(token_t)), -1);
+
+		tree_node_add_child(subtree, parser_parse_s(parser, NULL), -1);
+
+		lexer_lex(parser->lexer, token);
+
+		if (token_get_class(token) == T_PAREN_R)
+		{
+			printf("Adding terminal )\n");
+			tree_node_add_child(subtree,
+				tree_node_create((void *)token, sizeof(token_t)), -1);
+		}
+		else
+		{
+			printf("Parser error\n");
+		}
+	}
+	else
+	{
+		printf("Parser error\n");
 	}
 
 	token_destroy(token);
@@ -158,5 +182,147 @@ static tree_node_t *parser_parse_t(parser_t *parser, token_t *pushback)
  */
 static tree_node_t *parser_parse_s(parser_t *parser, token_t *pushback)
 {
-	return NULL;
+	token_t *token;
+
+	tree_node_t *subtree;
+	token_t *self;
+
+
+	printf("Following grammar rule S\n");
+	/* Create the head of the subtree. (The root of the grammar rule.) */
+	self = token_create();
+	token_set_class(self, T_G_S);
+
+	subtree = tree_node_create((void *)self, sizeof(token_t));
+
+	token_destroy(self);
+
+	/* Determine next token (may have already been lexed but not used). */
+	if (pushback != NULL)
+	{
+		token = pushback;
+	}
+	else
+	{
+		token = token_create();
+		lexer_lex(parser->lexer, token);
+	}
+
+	/* Add children: Add terminals directly and nonterminals through their
+		respective parse functions. */
+	if (token_get_class(token) == T_PAREN_L)
+	{
+		printf("Adding terminal (\n");
+		tree_node_add_child(subtree,
+			tree_node_create((void *)token, sizeof(token_t)), -1);
+
+		tree_node_add_child(subtree, parser_parse_sp(parser, NULL), -1);
+	}
+	if (token_get_class(token) != T_PAREN_L
+		&& token_get_class(token) != T_PAREN_R)
+	{
+		printf("Adding terminal atom\n");
+		tree_node_add_child(subtree,
+			tree_node_create((void *)token, sizeof(token_t)), -1);
+
+		tree_node_add_child(subtree, parser_parse_spp(parser, NULL), -1);
+	}
+	else
+	{
+		printf("Parser error\n");
+	}
+
+	token_destroy(token);
+
+	return subtree;
+}
+
+
+/*
+ *  
+ */
+static tree_node_t *parser_parse_sp(parser_t *parser, token_t *pushback)
+{
+	token_t *token;
+
+	tree_node_t *subtree;
+	token_t *self;
+
+
+	printf("Following grammar rule S'\n");
+	/* Create the head of the subtree. (The root of the grammar rule.) */
+	self = token_create();
+	token_set_class(self, T_G_SP);
+
+	subtree = tree_node_create((void *)self, sizeof(token_t));
+
+	token_destroy(self);
+
+	/* Determine next token (may have already been lexed but not used). */
+	if (pushback != NULL)
+	{
+		token = pushback;
+	}
+	else
+	{
+		token = token_create();
+		lexer_lex(parser->lexer, token);
+	}
+
+	/* Add children: Add terminals directly and nonterminals through their
+		respective parse functions. */
+	if (token_get_class(token) == T_PAREN_R)
+	{
+		printf("Adding terminal )\n");
+		tree_node_add_child(subtree,
+			tree_node_create((void *)token, sizeof(token_t)), -1);
+
+		tree_node_add_child(subtree, parser_parse_spp(parser, NULL), -1);
+	}
+	else
+	{
+		tree_node_add_child(subtree, parser_parse_s(parser, token), -1);
+
+		if (token_get_class(token) == T_PAREN_R)
+		{
+			printf("Adding terminal )\n");
+			tree_node_add_child(subtree,
+				tree_node_create((void *)token, sizeof(token_t)), -1);
+
+			tree_node_add_child(subtree, parser_parse_spp(parser, NULL), -1);
+		}
+		else
+		{
+			printf("Parser error\n");
+		}
+	}
+
+	token_destroy(token);
+
+	return subtree;
+}
+
+
+/*
+ *  
+ */
+static tree_node_t *parser_parse_spp(parser_t *parser, token_t *pushback)
+{
+	tree_node_t *subtree;
+	token_t *self;
+
+
+	printf("Following grammar rule S''\n");
+	/* Create the head of the subtree. (The root of the grammar rule.) */
+	self = token_create();
+	token_set_class(self, T_G_SPP);
+
+	subtree = tree_node_create((void *)self, sizeof(token_t));
+
+	token_destroy(self);
+
+	tree_node_add_child(subtree, parser_parse_s(parser, pushback), -1);
+	/* Do nothing for empty string. */
+
+	return subtree;
 }

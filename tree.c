@@ -54,7 +54,6 @@ void tree_set_root(tree_t *tree, tree_node_t *root)
  */
 void tree_print(tree_t *tree, void (*printer)(void *))
 {
-	printf("HERE\n");
 }
 
 

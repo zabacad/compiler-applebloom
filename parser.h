@@ -39,6 +39,8 @@ void parser_parse(parser_t *parser);
 static tree_node_t *parser_parse_f(parser_t *parser, token_t *pushback);
 static tree_node_t *parser_parse_t(parser_t *parser, token_t *pushback);
 static tree_node_t *parser_parse_s(parser_t *parser, token_t *pushback);
+static tree_node_t *parser_parse_sp(parser_t *parser, token_t *pushback);
+static tree_node_t *parser_parse_spp(parser_t *parser, token_t *pushback);
 
 
 

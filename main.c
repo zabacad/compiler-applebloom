@@ -100,7 +100,6 @@ int main(int argc, char **argv)
 		parser = parser_create(in_buffer);
 
 		parser_parse(parser);
-		tree_print(parser_get_tree(parser), NULL);
 
 		parser_destroy(parser);
 
