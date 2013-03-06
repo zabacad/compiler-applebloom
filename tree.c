@@ -14,10 +14,9 @@
 
 
 /*
- *  Create and return a tree with a copy of `data' at the root node.
- *  `data_size' bytes of data are copied.
+ *  Create and return an empty tree.
  */
-tree_t *tree_create(void *data, size_t data_size)
+tree_t *tree_create()
 {
 	tree_t *tree;
 
@@ -41,25 +40,33 @@ void tree_destroy(tree_t *tree)
 
 
 /*
- *  
+ *  Set the root `node' of a `tree'. Ignores any previous root.
  */
-void tree_set_root(tree_t *tree, tree_node_t *root)
+void tree_set_root(tree_t *tree, tree_node_t *node)
 {
-	tree->root = root;
+	tree->root = node;
 }
 
 
 /*
- *  
+ *  Return the root node of a `tree'. NULL on invalid.
  */
-void tree_print(tree_t *tree, void (*printer)(void *))
+tree_node_t *tree_get_root(tree_t *tree)
 {
+	if (tree == NULL)
+	{
+		fprintf(stderr, "Attempted to get root of NULL tree.\n");
+		return NULL;
+	}
+
+	return tree->root;
 }
 
 
 /*
  *  Create and return a tree node with a copy of `data'. `data_size' bytes of
- *  data are copied.
+ *  data are copied. A `data' of NULL or a `data_size' less than one creates a
+ *  node with no data.
  */
 tree_node_t *tree_node_create(void *data, size_t data_size)
 {
@@ -67,25 +74,31 @@ tree_node_t *tree_node_create(void *data, size_t data_size)
 
 
 	node = (tree_node_t *)malloc(sizeof(tree_node_t));
-	node->num_children = 0;
+
+	node->data = NULL;
 	node->children = NULL;
-	node->data = malloc(data_size);
-	memcpy(node->data, data, data_size);
+	node->num_children = 0;
+
+	if ((data != NULL) && (data_size > 0))
+	{
+		node->data = malloc(data_size);
+		memcpy(node->data, data, data_size);
+	}
 
 	return node;
 }
 
 
 /*
- *  Destroy a node and its data and its decendants and their data.
+ *  Destroy `node' and its data and the node's descendants and their data.
  */
 void tree_node_destroy(tree_node_t *node)
 {
-	int child;
+	int i;
 
 
-	for (child = 0; child < node->num_children; child++)
-		tree_node_destroy(node->children[child]);
+	for (i = 0; i < node->num_children; i++)
+		tree_node_destroy(node->children[i]);
 
 	free(node->data);
 	free(node->children);
@@ -94,24 +107,27 @@ void tree_node_destroy(tree_node_t *node)
 
 
 /*
- *  
- */
-void tree_node_print(tree_node_t *node, void(*printer)(void *), int depth)
-{
-}
-
-
-/*
- *  Copy data into a node.
+ *  Copy `data' into `node'. `data_size' bytes of data are copied. A `data' of
+ *  NULL or a `data_size' less than one leaves the `node' with no data.
  */
 void tree_node_set_data(tree_node_t *node, void *data, size_t data_size)
 {
+	if (node == NULL)
+	{
+		fprintf(stdout, "Attempted to copy data into NULL node.\n");
+		return;
+	}
+
 	/* Destroy old data. */
 	free(node->data);
+	node->data = NULL;
 
 	/* Copy new data. */
-	node->data = malloc(data_size);
-	memcpy(node->data, data, data_size);
+	if ((data != NULL) && (data_size > 0))
+	{
+		node->data = malloc(data_size);
+		memcpy(node->data, data, data_size);
+	}
 }
 
 
@@ -125,12 +141,12 @@ void *tree_node_get_data(tree_node_t *node)
 
 
 /*
- *  Add a `child' node to a tree as the `index' child of `parent'. A negative
- *  `index' appends the child as the last child of parent.
+ *  Insert a `child' node as the `index' child of `parent'. A negative `index'
+ *  appends the `child' as the last child of `parent'.
  */
 void tree_node_add_child(tree_node_t *parent, tree_node_t *child, int index)
 {
-	int c;
+	int i;
 
 
 	if (index < 0)
@@ -138,14 +154,12 @@ void tree_node_add_child(tree_node_t *parent, tree_node_t *child, int index)
 
 	/* Add space for child reference. */
 	parent->num_children++;
-	parent->children = (tree_node_t **)realloc(
-		parent->children,
-		(size_t)(parent->num_children * sizeof(tree_node_t *))
-	);
+	parent->children = (tree_node_t **)realloc(parent->children,
+		(size_t)(parent->num_children * sizeof(tree_node_t *)));
 
 	/* Shift children to make space. */
-	for (c = parent->num_children - 1; c > index; c++)
-		parent->children[c] = parent->children[c - 1];
+	for (i = parent->num_children - 1; i > index; i--)
+		parent->children[i] = parent->children[i - 1];
 
 	/* Add child. */
 	parent->children[index] = child;
@@ -158,17 +172,36 @@ void tree_node_add_child(tree_node_t *parent, tree_node_t *child, int index)
  */
 void tree_node_remove_child(tree_node_t *parent, int index)
 {
-	int c;
+	int i;
 
 
 	/* Shift children over into removed child. */
-	for (c = index; c < parent->num_children - 1; c++)
-		parent->children[c] = parent->children[c + 1];
+	for (i = index; i < parent->num_children - 1; i++)
+		parent->children[i] = parent->children[i + 1];
 
 	/* Free space used by removed child. */
 	parent->num_children--;
-	parent->children = (tree_node_t **)realloc(
-		parent->children,
-		(size_t)(parent->num_children * sizeof(tree_node_t *))
-	);
+	parent->children = (tree_node_t **)realloc(parent->children,
+		(size_t)(parent->num_children * sizeof(tree_node_t *)));
+}
+
+
+/*
+ *  Get the `index' child of `parent'. NULL when invalid.
+ */
+tree_node_t *tree_node_get_child(tree_node_t *parent, int index)
+{
+	if (parent == NULL)
+	{
+		fprintf(stdout, "Attempted to get child of NULL node.\n");
+		return NULL;
+	}
+
+	if (index >= parent->num_children)
+	{
+		fprintf(stdout, "Attempted to get child out of bounds.\n");
+		return NULL;
+	}
+
+	return parent->children[index];
 }
