@@ -308,6 +308,8 @@ static tree_node_t *parser_parse_sp(parser_t *parser, token_t *pushback)
  */
 static tree_node_t *parser_parse_spp(parser_t *parser, token_t *pushback)
 {
+	token_t *token;
+
 	tree_node_t *subtree;
 	token_t *self;
 
@@ -321,8 +323,26 @@ static tree_node_t *parser_parse_spp(parser_t *parser, token_t *pushback)
 
 	token_destroy(self);
 
-	tree_node_add_child(subtree, parser_parse_s(parser, pushback), -1);
+	/* Determine next token (may have already been lexed but not used). */
+	if (pushback != NULL)
+	{
+		token = pushback;
+	}
+	else
+	{
+		token = token_create();
+		lexer_lex(parser->lexer, token);
+	}
+
+	/* Add children: Add terminals directly and nonterminals through their
+		respective parse functions. Look ahead to see if S applies next. */
+	if (token_get_class(token) == T_PAREN_L)
+	{
+		tree_node_add_child(subtree, parser_parse_sp(parser, token), -1);
+	}
 	/* Do nothing for empty string. */
+
+	token_destroy(token);
 
 	return subtree;
 }
