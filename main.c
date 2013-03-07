@@ -52,6 +52,11 @@ int main(int argc, char **argv)
 		{
 			action = ACT_PARSE;
 		}
+		else if ((strcmp(argv[arg], "--translate") == 0)
+			&& (action <= ACT_TRANS))
+		{
+			action = ACT_TRANS;
+		}
 		else
 		{
 			fprintf(stderr, "Invalid argument: %s\n", argv[arg]);
@@ -70,9 +75,10 @@ int main(int argc, char **argv)
 			"\n"
 			"  Options:\n"
 			"\n"
-			"  -h, --help   Display this help text.\n"
-			"      --lex    Run the lexer.\n"
-			"      --parse  Run the parser. (Calls the lexer.)\n"
+			"  -h, --help       Display this help text.\n"
+			"      --lex        Run the lexer.\n"
+			"      --parse      Run the parser. (Calls the lexer.)\n"
+			"      --translate  Run the translator. (Calls the parser.)\n"
 		);
 	}
 	else if (action == ACT_LEX)
@@ -100,6 +106,17 @@ int main(int argc, char **argv)
 		parser = parser_create(in_buffer);
 
 		parser_parse(parser);
+
+		parser_destroy(parser);
+
+		return EXIT_SUCCESS;
+	}
+	else if (action == ACT_TRANS)
+	{
+		parser = parser_create(in_buffer);
+
+		parser_parse(parser);
+		translator_translate(parser_get_tree(parser));
 
 		parser_destroy(parser);
 

@@ -24,6 +24,7 @@
 
 
 /* Prototypes. */
+void translator_translate(tree_t *tree);
 
 
 

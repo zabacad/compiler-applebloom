@@ -12,7 +12,7 @@ LDFLAGS =
 
 
 ##  Files
-CFILES = main.c buffer.c lexer.c map.c parser.c token.c tree.c
+CFILES = main.c buffer.c lexer.c map.c parser.c token.c translator.c tree.c
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
 INFILES = stutest-parse00.in stutest-parse01.in stutest-parse02.in
 OUTFILES = $(addsuffix .out, $(basename $(INFILES)))

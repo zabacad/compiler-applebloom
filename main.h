@@ -13,6 +13,7 @@
 #include "buffer.h"
 #include "lexer.h"
 #include "parser.h"
+#include "translator.h"
 #include "tree.h"
 
 #include <stdio.h>
@@ -28,6 +29,7 @@
 #define ACT_USAGE 0x01
 #define ACT_LEX 0x02
 #define ACT_PARSE 0x03
+#define ACT_TRANS 0x04
 
 
 
