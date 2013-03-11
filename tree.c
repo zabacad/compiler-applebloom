@@ -187,6 +187,21 @@ void tree_node_remove_child(tree_node_t *parent, int index)
 
 
 /*
+ *  
+ */
+int tree_node_get_num_children(tree_node_t *node)
+{
+	if (node == NULL)
+	{
+		fprintf(stderr, "Attempted to get number of children of NULL node.\n");
+		return 0;
+	}
+
+	return node->num_children;
+}
+
+
+/*
  *  Get the `index' child of `parent'. NULL when invalid.
  */
 tree_node_t *tree_node_get_child(tree_node_t *parent, int index)

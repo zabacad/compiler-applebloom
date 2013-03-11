@@ -48,6 +48,7 @@ void tree_node_set_data(tree_node_t *node, void *data, size_t data_size);
 void *tree_node_get_data(tree_node_t *node);
 void tree_node_add_child(tree_node_t *parent, tree_node_t *child, int index);
 void tree_node_remove_child(tree_node_t *parent, int index);
+int tree_node_get_num_children(tree_node_t *node);
 tree_node_t *tree_node_get_child(tree_node_t *parent, int index);
 
 

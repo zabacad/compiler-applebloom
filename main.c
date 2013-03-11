@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
 
 	/* Set default settings. */
-	action = ACT_PARSE;
+	action = ACT_TRANS;
 	in_buffer = buffer_create(stdin);
 	out_buffer = buffer_create(stdout);
 

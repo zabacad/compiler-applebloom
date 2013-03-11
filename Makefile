@@ -14,7 +14,7 @@ LDFLAGS =
 ##  Files
 CFILES = main.c buffer.c lexer.c map.c parser.c token.c translator.c tree.c
 OBJFILES = $(addsuffix .o, $(basename $(CFILES)))
-INFILES = stutest-parse00.in stutest-parse01.in stutest-parse02.in
+INFILES = stutest-trans00.in stutest-trans01.in
 OUTFILES = $(addsuffix .out, $(basename $(INFILES)))
 
 
@@ -62,7 +62,7 @@ stutest.out: compiler $(OUTFILES)
 # *.in -> *.out as needed
 %.out: %.in
 	echo | cat $< - > $@
-	-./compiler --parse < $< >> $@
+	-./compiler --translate < $< >> $@
 	echo | cat $@ -
 
 proftest.out: compiler

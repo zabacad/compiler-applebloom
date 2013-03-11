@@ -163,12 +163,12 @@ static tree_node_t *parser_parse_t(parser_t *parser, token_t *pushback)
 		}
 		else
 		{
-			printf("Parser error\n");
+			printf("Parser error (T, paren r)\n");
 		}
 	}
 	else
 	{
-		printf("Parser error\n");
+		printf("Parser error (T, paren l)\n");
 	}
 
 	token_destroy(token);
@@ -218,7 +218,7 @@ static tree_node_t *parser_parse_s(parser_t *parser, token_t *pushback)
 
 		tree_node_add_child(subtree, parser_parse_sp(parser, NULL), -1);
 	}
-	if (token_get_class(token) != T_PAREN_L
+	else if (token_get_class(token) != T_PAREN_L
 		&& token_get_class(token) != T_PAREN_R)
 	{
 		printf("Adding terminal atom\n");
@@ -229,7 +229,7 @@ static tree_node_t *parser_parse_s(parser_t *parser, token_t *pushback)
 	}
 	else
 	{
-		printf("Parser error\n");
+		printf("Parser error (S)\n");
 	}
 
 	token_destroy(token);
@@ -293,7 +293,7 @@ static tree_node_t *parser_parse_sp(parser_t *parser, token_t *pushback)
 		}
 		else
 		{
-			printf("Parser error\n");
+			printf("Parser error (S')\n");
 		}
 	}
 
@@ -323,8 +323,11 @@ static tree_node_t *parser_parse_spp(parser_t *parser, token_t *pushback)
 
 	token_destroy(self);
 
+	/* ASSUME EMPTY STRING SINCE I HAVE NO WAY OF PUSHING TOKENS UP A RECURSIVE
+		CALL. */
+
 	/* Determine next token (may have already been lexed but not used). */
-	if (pushback != NULL)
+	/*if (pushback != NULL)
 	{
 		token = pushback;
 	}
@@ -332,17 +335,18 @@ static tree_node_t *parser_parse_spp(parser_t *parser, token_t *pushback)
 	{
 		token = token_create();
 		lexer_lex(parser->lexer, token);
-	}
+	}*/
 
 	/* Add children: Add terminals directly and nonterminals through their
 		respective parse functions. Look ahead to see if S applies next. */
-	if (token_get_class(token) == T_PAREN_L)
+	/*if (token_get_class(token) != T_PAREN_R)
 	{
-		tree_node_add_child(subtree, parser_parse_sp(parser, token), -1);
-	}
-	/* Do nothing for empty string. */
+		tree_node_add_child(subtree, parser_parse_s(parser, token), -1);
+	}*/
+	/* Empty string, pushback */
+	/* TODO */
 
-	token_destroy(token);
+	/*token_destroy(token);*/
 
 	return subtree;
 }

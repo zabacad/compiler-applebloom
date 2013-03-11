@@ -10,7 +10,7 @@
 
 
 
-#include "parser.h"
+#include "token.h"
 #include "tree.h"
 
 #include <stdlib.h>
@@ -25,6 +25,7 @@
 
 /* Prototypes. */
 void translator_translate(tree_t *tree);
+void translator_postorder(tree_node_t *node);
 
 
 
